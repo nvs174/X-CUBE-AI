@@ -61,8 +61,8 @@ all: main-build
 main-build: NVS_TinyML.elf secondary-outputs
 
 # Tool invocations
-NVS_TinyML.elf NVS_TinyML.map: $(OBJS) $(USER_OBJS) C:\Users\CHUWI\STM32CubeIDE\workspace_1.18.0\NVS_TinyML\STM32F411CEUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "NVS_TinyML.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\CHUWI\STM32CubeIDE\workspace_1.18.0\NVS_TinyML\STM32F411CEUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NVS_TinyML.map" -Wl,--gc-sections -static -L../Middlewares/ST/AI/Lib -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+NVS_TinyML.elf NVS_TinyML.map: $(OBJS) $(USER_OBJS) C:\Users\CHUWI\Documents\GitHub\X-CUBE-AI\STM32F411CEUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "NVS_TinyML.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\CHUWI\Documents\GitHub\X-CUBE-AI\STM32F411CEUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NVS_TinyML.map" -Wl,--gc-sections -static -L../Middlewares/ST/AI/Lib -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

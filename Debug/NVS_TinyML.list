@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000b868  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000ddcb  00000000  00000000  0000b898  2**0
+ 12 .debug_info   0000dd70  00000000  00000000  0000b898  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002115  00000000  00000000  00019663  2**0
+ 13 .debug_abbrev 000020d2  00000000  00000000  00019608  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000bc8  00000000  00000000  0001b778  2**3
+ 14 .debug_aranges 00000bc0  00000000  00000000  0001b6e0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000912  00000000  00000000  0001c340  2**0
+ 15 .debug_rnglists 0000090c  00000000  00000000  0001c2a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00018695  00000000  00000000  0001cc52  2**0
+ 16 .debug_macro  00018695  00000000  00000000  0001cbac  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000e076  00000000  00000000  000352e7  2**0
+ 17 .debug_line   0000e055  00000000  00000000  00035241  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0009b14c  00000000  00000000  0004335d  2**0
+ 18 .debug_str    0009b14f  00000000  00000000  00043296  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000086  00000000  00000000  000de4a9  2**0
+ 19 .comment      00000086  00000000  00000000  000de3e5  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00004328  00000000  00000000  000de530  2**2
+ 20 .debug_frame  0000430c  00000000  00000000  000de46c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000066  00000000  00000000  000e2858  2**0
+ 21 .debug_line_str 00000066  00000000  00000000  000e2778  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1416,12 +1416,12 @@ int main(void)
  800104a:	4872      	ldr	r0, [pc, #456]	@ (8001214 <main+0x290>)
  800104c:	f002 f84c 	bl	80030e8 <HAL_TIM_Base_Start>
   //Взводим прием данных по USART 1 раз
-  		HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, MAX_MODBUS_FRAME_SIZE);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, MAX_MODBUS_FRAME_SIZE);
  8001050:	220f      	movs	r2, #15
  8001052:	4971      	ldr	r1, [pc, #452]	@ (8001218 <main+0x294>)
  8001054:	4871      	ldr	r0, [pc, #452]	@ (800121c <main+0x298>)
  8001056:	f002 fa08 	bl	800346a <HAL_UARTEx_ReceiveToIdle_DMA>
-  		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+  __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
  800105a:	4b71      	ldr	r3, [pc, #452]	@ (8001220 <main+0x29c>)
  800105c:	681b      	ldr	r3, [r3, #0]
  800105e:	681a      	ldr	r2, [r3, #0]
@@ -1519,8 +1519,6 @@ int main(void)
  80010fc:	f8d7 3144 	ldr.w	r3, [r7, #324]	@ 0x144
  8001100:	2b00      	cmp	r3, #0
  8001102:	d0e7      	beq.n	80010d4 <main+0x150>
-		  //in_data[i] = (ai_float)2.0f;
-		  //in_data[i] = (ai_float)
 	  }
 
 	  // Сохраняем текущее значение счетчика таймера в переменной timestamp
@@ -1645,7 +1643,6 @@ int main(void)
  8001200:	2364      	movs	r3, #100	@ 0x64
  8001202:	4806      	ldr	r0, [pc, #24]	@ (800121c <main+0x298>)
  8001204:	f002 f8a6 	bl	8003354 <HAL_UART_Transmit>
-	  // HAL_UART_Transmit_DMA(&huart2, (uint8_t)tx_buffer, 3);
 	  flagMeasure = false;
  8001208:	4b08      	ldr	r3, [pc, #32]	@ (800122c <main+0x2a8>)
  800120a:	2200      	movs	r2, #0
@@ -2081,40 +2078,43 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  800148a:	f04f 0200 	mov.w	r2, #0
  800148e:	f04f 0300 	mov.w	r3, #0
  8001492:	e9c7 230c 	strd	r2, r3, [r7, #48]	@ 0x30
-		            double half = 0.0; // Для дробной части
+		double half = 0.0; // Для дробной части
  8001496:	f04f 0200 	mov.w	r2, #0
  800149a:	f04f 0300 	mov.w	r3, #0
  800149e:	e9c7 230a 	strd	r2, r3, [r7, #40]	@ 0x28
-		            int divisor = 1; // Делитель для дробной части
+		int divisor = 1; // Делитель для дробной части
  80014a2:	2301      	movs	r3, #1
  80014a4:	627b      	str	r3, [r7, #36]	@ 0x24
-		            bool flagHalf = true; // Флаг для определения, в какой части находимся
+		bool flagHalf = true; // Флаг для определения, в какой части находимся
  80014a6:	2301      	movs	r3, #1
  80014a8:	f887 3023 	strb.w	r3, [r7, #35]	@ 0x23
 
-		            for (int i = 0; Size - 2 > i; i++) {
+		for (int i = 0; Size - 2 > i; i++)
  80014ac:	2300      	movs	r3, #0
  80014ae:	61fb      	str	r3, [r7, #28]
  80014b0:	e061      	b.n	8001576 <HAL_UARTEx_RxEventCallback+0x106>
-		                if (rx_buffer[i] == '.') {
+		{
+			if (rx_buffer[i] == '.')
  80014b2:	4a4c      	ldr	r2, [pc, #304]	@ (80015e4 <HAL_UARTEx_RxEventCallback+0x174>)
  80014b4:	69fb      	ldr	r3, [r7, #28]
  80014b6:	4413      	add	r3, r2
  80014b8:	781b      	ldrb	r3, [r3, #0]
  80014ba:	2b2e      	cmp	r3, #46	@ 0x2e
  80014bc:	d103      	bne.n	80014c6 <HAL_UARTEx_RxEventCallback+0x56>
-		                	flagHalf = false; // Переключаемся на дробную часть
+			{
+				flagHalf = false; // Переключаемся на дробную часть
  80014be:	2300      	movs	r3, #0
  80014c0:	f887 3023 	strb.w	r3, [r7, #35]	@ 0x23
-		                    continue; // Переходим к следующему символу
+				continue; // Переходим к следующему символу
  80014c4:	e054      	b.n	8001570 <HAL_UARTEx_RxEventCallback+0x100>
-		                }
+			}
 
-		                if (flagHalf) {
+			if (flagHalf)
  80014c6:	f897 3023 	ldrb.w	r3, [r7, #35]	@ 0x23
  80014ca:	2b00      	cmp	r3, #0
  80014cc:	d02d      	beq.n	800152a <HAL_UARTEx_RxEventCallback+0xba>
-		                	all = all * 10 + (rx_buffer[i] - '0'); // Обрабатываем целую часть
+			{
+				all = all * 10 + (rx_buffer[i] - '0'); // Обрабатываем целую часть
  80014ce:	e9d7 890c 	ldrd	r8, r9, [r7, #48]	@ 0x30
  80014d2:	4642      	mov	r2, r8
  80014d4:	464b      	mov	r3, r9
@@ -2149,8 +2149,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  8001520:	e9d7 2300 	ldrd	r2, r3, [r7]
  8001524:	e9c7 230c 	strd	r2, r3, [r7, #48]	@ 0x30
  8001528:	e022      	b.n	8001570 <HAL_UARTEx_RxEventCallback+0x100>
-		                } else {
-		                	half = half * 10 + (rx_buffer[i] - '0'); // Обрабатываем дробную часть
+			}
+			else
+			{
+				half = half * 10 + (rx_buffer[i] - '0'); // Обрабатываем дробную часть
  800152a:	f04f 0200 	mov.w	r2, #0
  800152e:	4b2e      	ldr	r3, [pc, #184]	@ (80015e8 <HAL_UARTEx_RxEventCallback+0x178>)
  8001530:	e9d7 010a 	ldrd	r0, r1, [r7, #40]	@ 0x28
@@ -2174,14 +2176,14 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  800155c:	4602      	mov	r2, r0
  800155e:	460b      	mov	r3, r1
  8001560:	e9c7 230a 	strd	r2, r3, [r7, #40]	@ 0x28
-		                    divisor *= 10; // Увеличиваем делитель
+				divisor *= 10; // Увеличиваем делитель
  8001564:	6a7a      	ldr	r2, [r7, #36]	@ 0x24
  8001566:	4613      	mov	r3, r2
  8001568:	009b      	lsls	r3, r3, #2
  800156a:	4413      	add	r3, r2
  800156c:	005b      	lsls	r3, r3, #1
  800156e:	627b      	str	r3, [r7, #36]	@ 0x24
-		            for (int i = 0; Size - 2 > i; i++) {
+		for (int i = 0; Size - 2 > i; i++)
  8001570:	69fb      	ldr	r3, [r7, #28]
  8001572:	3301      	adds	r3, #1
  8001574:	61fb      	str	r3, [r7, #28]
@@ -2190,10 +2192,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  800157a:	69fa      	ldr	r2, [r7, #28]
  800157c:	429a      	cmp	r2, r3
  800157e:	db98      	blt.n	80014b2 <HAL_UARTEx_RxEventCallback+0x42>
-		                }
-		            }
+			}
+		}
 
-		            half /= divisor; // Приводим дробную часть к правильному виду
+		half /= divisor; // Приводим дробную часть к правильному виду
  8001580:	6a78      	ldr	r0, [r7, #36]	@ 0x24
  8001582:	f7fe ffd7 	bl	8000534 <__aeabi_i2d>
  8001586:	4602      	mov	r2, r0
@@ -2203,7 +2205,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  8001592:	4602      	mov	r2, r0
  8001594:	460b      	mov	r3, r1
  8001596:	e9c7 230a 	strd	r2, r3, [r7, #40]	@ 0x28
-		            sum = (double)all + half; // Используем double для
+		sum = (double)all + half; // Используем double для
  800159a:	e9d7 010c 	ldrd	r0, r1, [r7, #48]	@ 0x30
  800159e:	f7ff f805 	bl	80005ac <__aeabi_l2d>
  80015a2:	e9d7 230a 	ldrd	r2, r3, [r7, #40]	@ 0x28
@@ -2212,12 +2214,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  80015ac:	460b      	mov	r3, r1
  80015ae:	490f      	ldr	r1, [pc, #60]	@ (80015ec <HAL_UARTEx_RxEventCallback+0x17c>)
  80015b0:	e9c1 2300 	strd	r2, r3, [r1]
-		            HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, 20);
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, 20);
  80015b4:	2214      	movs	r2, #20
  80015b6:	490b      	ldr	r1, [pc, #44]	@ (80015e4 <HAL_UARTEx_RxEventCallback+0x174>)
  80015b8:	480d      	ldr	r0, [pc, #52]	@ (80015f0 <HAL_UARTEx_RxEventCallback+0x180>)
  80015ba:	f001 ff56 	bl	800346a <HAL_UARTEx_ReceiveToIdle_DMA>
-		            __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
  80015be:	4b0d      	ldr	r3, [pc, #52]	@ (80015f4 <HAL_UARTEx_RxEventCallback+0x184>)
  80015c0:	681b      	ldr	r3, [r3, #0]
  80015c2:	681a      	ldr	r2, [r3, #0]
@@ -2225,7 +2227,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  80015c6:	681b      	ldr	r3, [r3, #0]
  80015c8:	f022 0208 	bic.w	r2, r2, #8
  80015cc:	601a      	str	r2, [r3, #0]
-		            flagMeasure = true;
+		flagMeasure = true;
  80015ce:	4b0a      	ldr	r3, [pc, #40]	@ (80015f8 <HAL_UARTEx_RxEventCallback+0x188>)
  80015d0:	2201      	movs	r2, #1
  80015d2:	701a      	strb	r2, [r3, #0]
@@ -7988,6 +7990,11 @@ HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *huart, uint8_
  80034da:	681b      	ldr	r3, [r3, #0]
  80034dc:	330c      	adds	r3, #12
  80034de:	61bb      	str	r3, [r7, #24]
+ */
+__STATIC_FORCEINLINE uint32_t __LDREXW(volatile uint32_t *addr)
+{
+    uint32_t result;
+
    __ASM volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
  80034e0:	69bb      	ldr	r3, [r7, #24]
  80034e2:	e853 3f00 	ldrex	r3, [r3]
@@ -8002,6 +8009,11 @@ HAL_StatusTypeDef HAL_UARTEx_ReceiveToIdle_DMA(UART_HandleTypeDef *huart, uint8_
  80034f6:	6aba      	ldr	r2, [r7, #40]	@ 0x28
  80034f8:	627a      	str	r2, [r7, #36]	@ 0x24
  80034fa:	623b      	str	r3, [r7, #32]
+ */
+__STATIC_FORCEINLINE uint32_t __STREXW(uint32_t value, volatile uint32_t *addr)
+{
+   uint32_t result;
+
    __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
  80034fc:	6a39      	ldr	r1, [r7, #32]
  80034fe:	6a7a      	ldr	r2, [r7, #36]	@ 0x24

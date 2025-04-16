@@ -76,8 +76,6 @@ static void MX_DMA_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void restartDMA();
-void initRX();
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 
@@ -157,13 +155,6 @@ int main(void)
 	ai_output[0].size = sizeof(out_data);         // Установка размера выходных данных
 	ai_output[0].format = AI_BUFFER_FORMAT_FLOAT; // Установка формата данных
 
-	// time 9.25
-	/*ai_input[0].n_batches = 1;
-	ai_input[0].data = AI_HANDLE_PTR(in_data);
-	ai_output[0].n_batches = 1;
-	ai_input[0].data = AI_HANDLE_PTR(in_data);*/
-
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -190,8 +181,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim11);
   //Взводим прием данных по USART 1 раз
-  		HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, MAX_MODBUS_FRAME_SIZE);
-  		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, MAX_MODBUS_FRAME_SIZE);
+  __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
   //buf_len = sprintf(buf, "\r\n\r\nStm32 x-cube-ai test\r\n");
   //HAL_UART_Transmit(&huart2, (uint8_t*) buf, buf_len, 100);
   ai_err = ai_sine_model_create(&sine_model, AI_SINE_MODEL_DATA_CONFIG);
@@ -232,8 +223,6 @@ int main(void)
 	  {
 		  // Присваиваем каждому элементу массива in_data значение 2.0
 		  ((ai_float *)in_data)[i] = (ai_float)sum;
-		  //in_data[i] = (ai_float)2.0f;
-		  //in_data[i] = (ai_float)
 	  }
 
 	  // Сохраняем текущее значение счетчика таймера в переменной timestamp
@@ -259,34 +248,8 @@ int main(void)
 	  tx_buffer[2] =  i % 10 + '0';
 	  buf_len = sprintf(buf, "Output: %f | Duration: %lu\r\n", y_val, htim11.Instance->CNT - timestamp);
 	  HAL_UART_Transmit(&huart2, (uint8_t*) buf, buf_len, 100);
-	  // HAL_UART_Transmit_DMA(&huart2, (uint8_t)tx_buffer, 3);
 	  flagMeasure = false;
 	  }
-	  // Формируем строку с результатом и временем выполнения
-	  //buf_len = sprintf(buf, "Output: %f | Duration: %lu\r\n", y_val, htim11.Instance->CNT - timestamp);
-
-	  // Передаем строку с результатом по UART (закомментировано)
-	  // HAL_UART_Transmit(&huart2, (uint8_t*) buf, buf_len, 100);
-
-	  // Задержка на 500 миллисекунд
-	  //HAL_Delay(500);
-	//  }
-
-
-
-	  /*timestamp = htim11.Instance->CNT;
-
-	  nbatch = ai_sine_model_run(sine_model, &ai_input[0], &ai_output[0]);
-	  if (nbatch != 1)
-	  {
-		  buf_len = sprintf(buf, "Error: could not run interfance\r\n");
-		  //HAL_UART_Transmit(&huart2, (uint8_t*) buf, buf_len, 100);
-	  }
-	  y_val = ((float*) out_data)[0];
-
-	  buf_len = sprintf(buf, "Output: %f | Duration: %lu\r\n", y_val, htim11.Instance->CNT - timestamp);
-	  //HAL_UART_Transmit(&huart2, (uint8_t*) buf, buf_len, 100);
-	  HAL_Delay(500);*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -459,46 +422,36 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	{
 
 		long long all = 0; // Для целой части
-		            double half = 0.0; // Для дробной части
-		            int divisor = 1; // Делитель для дробной части
-		            bool flagHalf = true; // Флаг для определения, в какой части находимся
+		double half = 0.0; // Для дробной части
+		int divisor = 1; // Делитель для дробной части
+		bool flagHalf = true; // Флаг для определения, в какой части находимся
 
-		            for (int i = 0; Size - 2 > i; i++) {
-		                if (rx_buffer[i] == '.') {
-		                	flagHalf = false; // Переключаемся на дробную часть
-		                    continue; // Переходим к следующему символу
-		                }
+		for (int i = 0; Size - 2 > i; i++)
+		{
+			if (rx_buffer[i] == '.')
+			{
+				flagHalf = false; // Переключаемся на дробную часть
+				continue; // Переходим к следующему символу
+			}
 
-		                if (flagHalf) {
-		                	all = all * 10 + (rx_buffer[i] - '0'); // Обрабатываем целую часть
-		                } else {
-		                	half = half * 10 + (rx_buffer[i] - '0'); // Обрабатываем дробную часть
-		                    divisor *= 10; // Увеличиваем делитель
-		                }
-		            }
+			if (flagHalf)
+			{
+				all = all * 10 + (rx_buffer[i] - '0'); // Обрабатываем целую часть
+			}
+			else
+			{
+				half = half * 10 + (rx_buffer[i] - '0'); // Обрабатываем дробную часть
+				divisor *= 10; // Увеличиваем делитель
+			}
+		}
 
-		            half /= divisor; // Приводим дробную часть к правильному виду
-		            sum = (double)all + half; // Используем double для
-		            HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, 20);
-		            __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
-		            flagMeasure = true;
+		half /= divisor; // Приводим дробную часть к правильному виду
+		sum = (double)all + half; // Используем double для
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, 20);
+		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
+		flagMeasure = true;
 	}
 }
-
-
-void initRX()
-{
-
- 	 // Очистка буфера и сброс флагов
- 	 UART_ClearBuffer(&huart2, rx_buffer, sizeof(rx_buffer));
- 	 UART_ResetErrorFlags(&huart2);
-
- 	 HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rx_buffer, MAX_MODBUS_FRAME_SIZE);
- 	 __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
- }
-
-
-
 
 /* USER CODE END 4 */
 
